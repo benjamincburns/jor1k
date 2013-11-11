@@ -2,15 +2,25 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>jor1k: OpenRISC OR1K Javascript Emulator Running Linux</title>
+        <title>jor1k: OpenRISC OR1K Javascript Emulator Running Linux With Network Support</title>
         <meta name="keywords" content="opencore, emulation, or1000, javascript, linux">
         <meta name="author" content="Sebastian Macke">
         <link rel="stylesheet" href="css/default.css">
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-45581679-1', 'widgetry.org');
+            ga('send', 'pageview');
+
+        </script>
     </head>
     <body onload="Start()">
     <div class="heading">
     <a href="http://opencores.org/or1k/"><img src="globe.png"></img></a>
-    <h1>jor1k: OpenRISC OR1K Javascript Emulator Running Linux</h1>
+    <h1>jor1k: OpenRISC OR1K Javascript Emulator Running Linux With Network Support</h1>
     </div>
     <div class="windows">
         <table>
@@ -31,6 +41,7 @@
                             <option value="safe">Safe Core (Slow)</option>
                         </select>
                         <select id="hdselect" onchange='jor1kgui.ChangeImage(this.options[this.selectedIndex].value)'>
+                            <option value="../../bin/netdemo.bz2">Network Support Demo (8.2MB)</option>
                             <option value="../../bin/hddemo.bz2">Graphic demos, games, and ScummVM (Monkey island) (7MB)</option>
                             <option value="../../bin/hdgcc.bz2">Gnu C Compiler. Compile Frotz to play a text adventure (10 MB) </option>
                             <option value="../../bin/hdX.bz2">Basic X window system running twm, glxgears, xterm and xeyes (9MB)</option>
@@ -53,9 +64,9 @@
        
         </div>
         <div class="infobox">
-            <h3>Don't know what to do?</h3>
+            <h3>Network Support</h3>
             <ul>
-                <li>Have a look at the <a href="https://github.com/s-macke/jor1k/wiki/Explore-the-emulator" target="_blank">Explore the emulator</a> page at the project wiki.</li>
+                <li>For more info, have a look at this <a href="http://www.benjamincburns.com/2013/11/10/jor1k-ethmac-support.html" target="_blank">blog post</a></li>
             </ul>
 
             <h3>Links</h3>
@@ -70,6 +81,7 @@
             <ul>
                 <li>Sebastian Macke <a href="http://simulationcorner.net/">simulationcorner.net</a></li>
                 <li>Gerard Braad <a href="http://gbraad.nl">gbraad.nl</a></li>
+                <li>Ben Burns <a href="http://www.benjamincburns.com">benjamincburns.com</a></li>
             </ul>
 
         </div>
@@ -85,7 +97,7 @@ function SelectHD()
 }
  
 function Start() {
-    jor1kgui = new jor1kGUI("tty", "fb", "stats", ["../../bin/vmlinux.bin.bz2", "../../bin/hddemo.bz2"], "ws://jor1k:9999/");
+    jor1kgui = new jor1kGUI("tty", "fb", "stats", ["../../bin/vmlinux.bin.bz2", "../../bin/netdemo.bz2"], "ws://relay.widgetry.org/");
 }
 </script>
 
