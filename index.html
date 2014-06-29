@@ -6,6 +6,7 @@
         <meta name="keywords" content="opencore, emulation, or1000, javascript, linux">
         <meta name="author" content="Sebastian Macke">
         <link rel="stylesheet" href="css/default.css">
+        <script src="http://localhost:8800/socket.io/socket.io.js"></script>
     </head>
     <body onload="Start()">
     <div class="heading">
@@ -31,11 +32,11 @@
                             <option value="safe">Safe Core (Slow)</option>
                         </select>
                         <select id="hdselect" onchange='jor1kgui.ChangeImage(this.options[this.selectedIndex].value)'>
-                            <option value="../../bin/netdemo.bz2">Network tools (links, lynx, nmap, ssh, wget) (8.2MB)</option>
-                            <option value="../../bin/hddemo.bz2">Graphic demos, games, and ScummVM (Monkey island) (7MB)</option>
-                            <option value="../../bin/hdgcc.bz2">Gnu C Compiler. Compile Frotz to play a text adventure (10 MB) </option>
-                            <option value="../../bin/hdX.bz2">Basic X window system running twm, glxgears, xterm and xeyes (9MB)</option>
-                            <option value="../../bin/hdwayland.bz2">Wayland/Weston running a few demos and a terminal (4MB)</option>
+                            <option value="netdemo">Network tools (links, lynx, nmap, ssh, wget) (8.2MB)</option>
+                            <option value="hddemo">Graphic demos, games, and ScummVM (Monkey island) (7MB)</option>
+                            <option value="hdgcc">Gnu C Compiler. Compile Frotz to play a text adventure (10 MB) </option>
+                            <option value="hdX">Basic X window system running twm, glxgears, xterm and xeyes (9MB)</option>
+                            <option value="hdwayland">Wayland/Weston running a few demos and a terminal (4MB)</option>
                         </select>
                     </form>
                     </span>
@@ -122,7 +123,7 @@ function SelectHD()
 }
  
 function Start() {
-    jor1kgui = new jor1kGUI("tty", "fb", "stats", ["../../bin/vmlinux.bin.bz2", "../../bin/netdemo.bz2"], "ws://relay.widgetry.org/");
+    jor1kgui = new jor1kGUI("tty", "fb", "stats", ["../../bin/vmlinux.bin.bz2", "netdemo"], "ws://relay.widgetry.org/");
 }
 </script>
 

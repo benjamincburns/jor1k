@@ -177,7 +177,16 @@ if (typeof Math.imul == "undefined") {
     }
 
     this.fbdev = new FBDev(this.ram);
-    this.atadev = new ATADev(this);
+    this.atadev = new RemoteATADev(this);
+
+    this.atadev.ReadCallback = function(data) {
+        SendToMaster("ATARead", data);
+    }
+
+    this.atadev.WriteCallback = function(data) {
+        SendToMaster("ATAWrite", data);
+    }
+
     this.tsdev = new TouchscreenDev(this);
     this.kbddev = new KeyboardDev(this);
 
@@ -282,27 +291,23 @@ System.prototype.SendStringToTerminal = function(str)
     }
 }
 
-System.prototype.LoadImageAndStart = function(urls) {
-    DebugMessage("Loading urls " + urls);
+System.prototype.LoadImageAndStart = function(data) {
+    DebugMessage("Loading urls " + data.urls);
+
     this.SendStringToTerminal("Loading kernel and hard drive image from web server. Please wait ...\r\n");
-    DownloadAllAsync(urls, this.ImageFinished.bind(this), function(error){DebugMessage(error);} );
+
+    this.atadev.SetImageData(data.imageData);
+    DownloadAllAsync(data.urls, this.ImageFinished.bind(this), function(error){DebugMessage(error);} );
 }
 
 System.prototype.ImageFinished = function(result) {
     result.forEach(function(buffer, i) {
-        var buffer8 = new Uint8Array(buffer);
         if (i == 0) { // kernel image
+            var buffer8 = new Uint8Array(buffer);
             this.SendStringToTerminal("Decompressing kernel...\r\n");
             var length = bzip2.simple(bzip2.array(buffer8), this.ram.uint8mem);
             for (var i = 0; i < length >> 2; i++) this.ram.int32mem[i] = Swap32(this.ram.int32mem[i]); // big endian to little endian
             DebugMessage("File loaded: " + length + " bytes");
-        } else { // hard drive
-            this.SendStringToTerminal("Decompressing hard drive image...\r\n");
-            var drive = new ArrayBuffer(30*1024*1024); // bzip does not know the final size
-            var driveimage = new Uint8Array(drive);
-            var length = bzip2.simple(bzip2.array(buffer8), driveimage);
-            DebugMessage("File loaded: " + length + " bytes");
-            this.atadev.SetBuffer(drive);
         }
     }.bind(this));
 

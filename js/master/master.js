@@ -34,7 +34,19 @@ function jor1kGUI(termid, fbid, statsid, imageurls, relayURL)
     this.ChangeImage = function(newurl) {
         this.urls[1] = newurl;
         this.SendToWorker("Reset");
-        this.SendToWorker("LoadAndStart", this.urls);
+        this.socket = io('http://localhost:8800');
+
+        this.socket.on("openfile", function(data) {
+            this.SendToWorker("LoadAndStart", { 'urls' : [this.urls[0]], 'imageData' : data});
+        }.bind(this));
+
+        this.socket.on("read", function(data) {
+            this.SendToWorker("ATARead", data);
+        }.bind(this));
+
+        this.socket.on("connect", function() {
+            this.socket.emit("openfile", { "filename" : newurl });
+        }.bind(this));
     };
 
     this.term = new Terminal(24, 80, termid);
@@ -101,7 +113,7 @@ function jor1kGUI(termid, fbid, statsid, imageurls, relayURL)
     this.stats = document.getElementById(statsid);
 
     this.stop = false;
-    this.SendToWorker("LoadAndStart", this.urls);
+    this.ChangeImage(this.urls[1]);
     window.setInterval(function(){this.SendToWorker("GetIPS", 0)}.bind(this), 1000);
     window.setInterval(function(){this.SendToWorker("GetFB", 0)}.bind(this), 100);
 }
@@ -112,6 +124,10 @@ jor1kGUI.prototype.OnMessage = function(e) {
     if (e.data.command == "ethmac") this.ethernet.SendFrame(e.data.data); else
     if (e.data.command == "tty") this.term.PutChar(e.data.data); else
     if (e.data.command == "GetFB") this.UpdateFramebuffer(e.data.data); else
+    if (e.data.command == "ATARead") {
+        this.socket.emit('read', e.data.data);
+    } else
+    if (e.data.command == "ATAWrite") this.socket.emit('write', e.data.data); else
     if (e.data.command == "Stop") {console.log("Received stop signal"); this.stop = true;} else
     if (e.data.command == "GetIPS") {        
         this.stats.innerHTML = (Math.floor(e.data.data/100000)/10.) + " MIPS";

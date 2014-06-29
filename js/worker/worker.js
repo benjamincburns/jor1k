@@ -2,7 +2,7 @@
 // -------------------- Worker ---------------------
 // -------------------------------------------------
 
-importScripts('utils.js', 'framebuffer.js', 'ethmac.js', 'ata.js',
+importScripts('utils.js', 'framebuffer.js', 'ethmac.js', 'remote_ata.js',
     'uart.js', 'touchscreen.js', 'keyboard.js', 'ram.js', 'cpu/cpu.js',
     'system.js', 'bzip2.js', 'cpu/fastcpu.js', 'cpu/safecpu.js'
     );
@@ -71,6 +71,9 @@ onmessage = function(e) {
     if (e.data.command == "LoadAndStart") {
         sys.LoadImageAndStart(e.data.data);
         return;
+    } else 
+    if (e.data.command == "ATARead") {
+        sys.atadev.SwapBuffer(new Uint16Array(e.data.data.buffer), e.data.data.offset, e.data.data.length, true);
     }
 
 
